@@ -79,11 +79,13 @@ def get_tasks(db, user_id=None):
         return tasks
     else:
         print """No tasks exist"""
-        # else:
-    #     result = c.fetchall()
-    #     fields = []
-    #     return dict(zip(fields,result))
-
 
 def get_task(db, task_id):
     """Gets a single task, given its id. Returns a dictionary of the task data."""
+    c = db.cursor()
+    query = """SELECT * FROM Tasks WHERE id = ?"""
+    c.execute(query,(task_id))
+    result = c.fetchone()
+    if result:
+        fields = ["id", "title", "created_at", "completed_at", "user_id"]
+        return dict(zip(fields, result))
