@@ -7,12 +7,14 @@ import datetime
 def connect_db():
     return sqlite3.connect("tipsy.db")
 
+
 def new_user(db, email, password, name):          
     c = db.cursor()                                     
     query = """INSERT INTO Users VALUES (NULL, ?, ?, ?)"""                                                           
     result = c.execute(query, (email, password, name))          
     db.commit()
     return result.lastrowid
+
 
 def authenticate(db, email, password):
     c = db.cursor()
@@ -22,8 +24,8 @@ def authenticate(db, email, password):
     if result:
         fields = ["id", "email", "password", "username"]
         return dict(zip(fields, result))
-
     return None
+
 
 def get_user(db, user_id):
     """Gets a user dictionary out of the database given an id"""
@@ -34,6 +36,7 @@ def get_user(db, user_id):
     if result:
         fields = ["id", "email", "password", "username"]
         return dict(zip(fields,result))
+
 
 def new_task(db, title, user_id):
     """Given a title and a user_id, create a new task belonging to that user. Return the id of the created task"""
@@ -54,7 +57,7 @@ def complete_task(db, task_id):
     db.commit()
 
 
-def get_tasks(db, user_id):
+def get_tasks(db, user_id=None):
     """Get all the tasks matching the user_id, getting all the tasks in the system if the user_id is not provided. Returns the results as a list of dictionaries."""
     c = db.cursor()
     tasks = []
@@ -66,7 +69,7 @@ def get_tasks(db, user_id):
         c.execute(query, (user_id))
     
     result = c.fetchall()  
-    
+
     #if result:
         #for row in result:
             #new_dict = {}
