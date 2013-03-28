@@ -1,3 +1,4 @@
+
 """ model.py """
 
 import sqlite3 import datetime
@@ -57,6 +58,7 @@ def complete_task(db, task_id):
     db.commit()
     return result.lastrowid
 
+
 def get_tasks(db, user_id=None):
     """Get all the tasks matching the user_id, getting all the tasks in the system if the user_id is not provided. Returns the results as a list of dictionaries."""
     c = db.cursor()
@@ -92,3 +94,4 @@ def get_task(db, task_id):
     if result: #if task(s) exist for that user
         fields = ["id", "title", "created_at","completed_at", "user_id"] #creates a list of fields
         return dict(zip(fields, result)) # matches fields to results & zips into a dictionary
+
