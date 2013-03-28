@@ -1,24 +1,23 @@
-"""
-model.py
-"""
-import sqlite3
-import datetime
+""" model.py """
+
+import sqlite3 import datetime
 
 def connect_db():
     return sqlite3.connect("tipsy.db")
 
 
-def new_user(db, email, password, name):          
-    c = db.cursor()     #creates cursor at lines you want                                
-    query = """INSERT INTO Users VALUES (NULL, ?, ?, ?)"""                                                           
-    result = c.execute(query, (email, password, name))   # c.execute always needs a tuple of stuff you're entering!   
-    db.commit() #commit to database
-    return result.lastrowid #returns ID (primary key) of user you created
+def new_user(db, email, password, name):
+    c = db.cursor() #creates cursor
+    query = """INSERT INTO Users VALUES (NULL, ?, ?, ?)"""
+    result = c.execute(query, (email, password, name)) # c.execute always needs variables to be entered as a tuple.
+    # Variables entered after execute() have to match those from above at -- new_user(these variables)
+    db.commit() #commits query to database
+    return result.lastrowid #returns ID (primary key) of user you created -- useful for later on
 
 
 def authenticate(db, email, password):
     c = db.cursor()
-    query = """SELECT * from Users WHERE email=? AND password=?""" 
+    query = """SELECT * from Users WHERE email=? AND password=?"""
     c.execute(query, (email, password))
     result = c.fetchone() # fetchone gets one row from db
     if result:
@@ -56,21 +55,21 @@ def complete_task(db, task_id):
     query = """UPDATE Tasks SET completed_at=? WHERE id = ?""" #updates db
     result = c.execute(query,(time_completed, task_id))
     db.commit()
-
+    return result.lastrowid
 
 def get_tasks(db, user_id=None):
     """Get all the tasks matching the user_id, getting all the tasks in the system if the user_id is not provided. Returns the results as a list of dictionaries."""
     c = db.cursor()
-     
+
 
     if user_id == None: #if not given any user id, query selects all tasks
         query = """SELECT * FROM Tasks"""
         c.execute(query,())
-        
+
     else:
         query = """SELECT * FROM Tasks WHERE user_id = ?""" #with user id, selects tasks for that user
         c.execute(query, (user_id))
-    
+
     result = c.fetchall() #result can be one, many or none
 
     if result: #if task(s) exist from the query
@@ -82,14 +81,14 @@ def get_tasks(db, user_id=None):
         return tasks # returns the tasks as a list of dictionaries
     else:
         print "No tasks exist"
-        
+
 
 def get_task(db, task_id):
     """Gets a single task, given its id. Returns a dictionary of the task data."""
     c = db.cursor()
     query = """SELECT * FROM Tasks WHERE id = ?""" #selects task(s) from particular user id
     c.execute(query,(task_id))
-    result = c.fetchone() 
+    result = c.fetchone()
     if result: #if task(s) exist for that user
-        fields = ["id", "title", "created_at", "completed_at", "user_id"] #creates a list of fields
+        fields = ["id", "title", "created_at","completed_at", "user_id"] #creates a list of fields
         return dict(zip(fields, result)) # matches fields to results & zips into a dictionary
